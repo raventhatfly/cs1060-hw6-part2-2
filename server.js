@@ -27,10 +27,28 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'healthy', timestamp: new Date().toISOString() });
 });
 
-// Serve static assets in production
+// Root route
+app.get('/', (req, res) => {
+  res.json({ 
+    message: 'VOCA AI API Server',
+    status: 'running',
+    endpoints: [
+      '/api/health',
+      '/api/executive/overview',
+      '/api/manager/overview',
+      '/api/employee/overview'
+    ]
+  });
+});
+
+// Serve static assets in production (only for non-API routes)
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static('client/build'));
   app.get('*', (req, res) => {
+    // Don't serve index.html for API routes
+    if (req.path.startsWith('/api')) {
+      return res.status(404).json({ error: 'API endpoint not found' });
+    }
     res.sendFile(path.join(__dirname, 'client', 'build', 'index.html'));
   });
 }
