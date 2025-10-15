@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
+const path = require('path');
 require('dotenv').config();
 
 const app = express();
@@ -34,6 +35,12 @@ if (process.env.NODE_ENV === 'production') {
   });
 }
 
-app.listen(PORT, () => {
-  console.log(`🚀 VOCA AI Server running on port ${PORT}`);
-});
+// Export for Vercel serverless
+module.exports = app;
+
+// Start server locally
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`🚀 VOCA AI Server running on port ${PORT}`);
+  });
+}
